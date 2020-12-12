@@ -1,0 +1,343 @@
+---
+title: "LATENT VARIABLE MEASURE DEVELOPMENT: CFA"
+author: "Joanna Moody"
+date: 'Last updated: October 16, 2020'
+output: html_document
+---
+
+```{r setup, results="hide", warning=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+#Initialization
+rm(list=ls(all=TRUE))
+library(knitr)
+library(lavaan)
+library(semTools)
+
+#Load input data
+setwd("/Users/jcmoody/Dropbox (MIT)/07_Latent_attitude_and_AV_perference/")
+data <-read.csv("data/individual_new.csv",header=TRUE, sep = ",", stringsAsFactors = FALSE)
+data[data == -1] <- NA #-1 indicates missing data
+
+#Note: indicators labeled with "mode_PERC" are "mode_Enjoy"
+
+#Missing data for driving mode: 
+#  Individuals who do not have access to a car were not asked these questions;
+#  there is no way to estimate a factor score for them because they are missing on
+#  all indicators systematically.
+#Only estimated for 953 of the 2003 respondents in the sample.
+
+```
+
+## CONVERGENT VALIDITY (continuous)
+Treating 7-point scale as continuous (using Maximum Likelihood estimation)
+
+### WALK
+
+Model 0: Baseline model with all 5 indicators, no correlated errors 
+
+```{r, linewidth=60}
+walk.model0 <- 'Walk =~ WSAFE + WCOMF + WRELY + WEASY + WPERC' 
+fit.walk.model0 <- cfa(walk.model0, data=data, missing='fiml')
+
+#Model fit has TLI and RMSEA outside of recommended bounds: 
+#  chi-square(N = 2003, df = 5) = 208.247, 
+#  CFI = 0.939, TLI = 0.879, 
+#  RMSEA = 0.142, SRMR = 0.042
+#Factor loadings: lowest standardized loadings is 0.5; all others > 0.6
+summary(fit.walk.model0, fit.measures=TRUE, standardized=TRUE)
+
+#Modification indices: suggest that model fit could be greatly improved if 
+#  the error terms of the following indicators are correlated: 
+#  WSAFE ~~ WRELY are correlated (157.7); WCOMF ~~ WPERC (96.7)
+mi.walk.model0 <- modindices(fit.walk.model0)
+mi.walk.model0
+
+```
+
+Model 1: Baseline model + correlated error between WSAFE and WRELY
+
+```{r}
+walk.model1 <- 'Walk =~ WSAFE + WCOMF + WRELY + WEASY + WPERC
+                WSAFE ~~ WRELY' 
+fit.walk.model1 <- cfa(walk.model1, data=data, missing='fiml')
+
+#All model fit indices now within recommended bounds: 
+#  chi-square(N = 2003, df = 4) = 50.299, 
+#  CFI = 0.986, TLI = 0.966, 
+#  RMSEA = 0.076, SRMR = 0.020
+#Factor loadings: standardized loading for WSAFE dropped to 0.454 (okay, not great)
+summary(fit.walk.model1, fit.measures=TRUE, standardized=TRUE)
+
+#Modification indices: MI for WCOMF ~~ WPERC fell to 47.039, so probably not 
+#  worth the loss in degrees of freedom to include another correlated error term
+mi.walk.model1 <- modindices(fit.walk.model1)
+mi.walk.model1
+
+inspect(fit.walk.model1, 'r2')
+```
+
+
+### PUBLIC TRANSIT
+
+Model 0: Baseline model with all 5 indicators, no correlated errors 
+
+```{r}
+pt.model0 <- 'PT =~ PTSAFE + PTCOMF + PTRELY + PTEASY + PTPERC' 
+fit.pt.model0 <- cfa(pt.model0, data=data, missing='fiml')
+
+#Model fit is okay, but should inspect modification indices (slighly high RMSEA: 
+#  chi-square(N = 2003, df = 5) = 94.823, 
+#  CFI = 0.973, TLI = 0.946, 
+#  RMSEA = 0.095, SRMR = 0.028
+#Factor loadings: PTSAFE has standardized loading of 0.451, the rest are over 0.65
+summary(fit.pt.model0, fit.measures=TRUE, standardized=TRUE)
+
+#Modification indices: 
+# Highest MIs are ~45 for PTSAFE ~~ PTEASY and PTSAFE ~~ PTPERC (probably not worth including)
+mi.pt.model0 <- modindices(fit.pt.model0)
+mi.pt.model0
+
+inspect(fit.pt.model0, 'r2')
+```
+
+
+### RIDEHAILING
+
+Model 0: Baseline model with all 5 indicators, no correlated errors 
+
+```{r}
+rh.model0 <- 'RH =~ CARSAFE + CARCOMF + CARRELY + CAREASY + CARPERC' 
+fit.rh.model0 <- cfa(rh.model0, data=data, missing='fiml')
+
+#Good model fit: 
+#  chi-square(N = 2003, df = 5) = 54.086, 
+#  CFI = 0.988, TLI = 0.976, 
+#  RMSEA = 0.070, SRMR = 0.018
+#Factor loadings: All indicators have standardized loadings of > 0.65. Great!
+summary(fit.rh.model0, fit.measures=TRUE, standardized=TRUE)
+
+#Very low MIs, so no need for correlated errors (supported by already good model fit) 
+mi.rh.model0 <- modindices(fit.rh.model0)
+mi.rh.model0 
+
+inspect(fit.rh.model0, 'r2')
+```
+
+### DRIVE
+
+Model 0: Baseline model with all 5 indicators, no correlated errors 
+
+```{r, warning=FALSE}
+drive.model0 <- 'Drive =~ DRSAFE + DRCOMF + DRRELY + DREASY + DRPERC' 
+fit.drive.model0 <- cfa(drive.model0, data=data, missing='fiml')
+
+#Very good model fit: 
+#  chi-square(N = 953, df = 5) = 10.634,
+#  CFI = 0.997, TLI = 0.995, 
+#  RMSEA = 0.034, SRMR = 0.011
+#Factor loadings: All indicators have standardized loadings of > 0.60!
+summary(fit.drive.model0, fit.measures=TRUE, standardized=TRUE)
+
+mi.drive.model0 <- modindices(fit.drive.model0)
+mi.drive.model0 
+#Low MIs, so no need for correlated errors; can't improve model fit over current levels!
+
+inspect(fit.drive.model0, 'r2')
+```
+
+
+## CONVERGENT VALIDITY (ordinal)
+Treating 7-point scale as ordered, categorical data (using WLSMV estimation)
+
+### WALK
+
+Model 1: Baseline model + correlated error between WSAFE and WRELY
+
+```{r}
+#walk.model1 <- 'Walk =~ WSAFE + WCOMF + WRELY + WEASY + WPERC
+#                WSAFE ~~ WRELY' 
+fit.walk.model1.ord <- cfa(walk.model1, data=data, 
+                           ordered=c("WSAFE","WCOMF","WRELY","WEASY", "WPERC"),
+                           missing="pairwise")
+
+#lavaan using WLSMV estimator: uses diagonally weighted least squares (DWLS) to estimate the model parameters, but uses the full weight matrix to compute robust standard errors, and a mean- and variance-adjusted test stastistic.
+
+#All model fit indices remain within recommended bounds: 
+#  chi-square(N = 2003, df = 4) = 28.205, p < .01, scaling correction factor = 0.664
+#  CFI = 0.995, TLI = 0.988, 
+#  RMSEA = 0.055, SRMR = 0.032
+#Factor loadings: standardized loading for all indicators at least 0.5
+summary(fit.walk.model1.ord, fit.measures=TRUE, standardized=TRUE)
+
+inspect(fit.walk.model1.ord, 'r2')
+```
+
+
+### PUBLIC TRANSIT
+
+Model 0: Baseline model with all 5 indicators, no correlated errors 
+
+```{r}
+#pt.model0 <- 'PT =~ PTSAFE + PTCOMF + PTRELY + PTEASY + PTPERC' 
+fit.pt.model0.ord <- cfa(pt.model0, data=data, 
+                         ordered=c("PTSAFE", "PTCOMF", "PTRELY", "PTEASY", "PTPERC"),
+                         missing='pairwise')
+
+#Model fit is okay, but should inspect modification indices (slighly high RMSEA: 
+#  chi-square(N = 2003, df = 5) = 33.510, p < .01, scaling correction factor = 0.715
+#  CFI = 0.996, TLI = 0.993, 
+#  RMSEA = 0.053, SRMR = 0.037
+#Factor loadings: All indicators have standardized loading of 0.5 or higher
+summary(fit.pt.model0.ord, fit.measures=TRUE, standardized=TRUE)
+
+inspect(fit.pt.model0.ord, 'r2')
+```
+
+
+### RIDEHAILING
+
+Model 0: Baseline model with all 5 indicators, no correlated errors 
+
+```{r}
+#rh.model0 <- 'RH =~ CARSAFE + CARCOMF + CARRELY + CAREASY + CARPERC' 
+fit.rh.model0.ord <- cfa(rh.model0, data=data, 
+                         ordered=c("CARSAFE", "CARCOMF", "CARRELY", "CAREASY", "CARPERC"),
+                         missing='pairwise')
+
+#Good model fit: 
+#  chi-square(N = 2003, df = 5) = 30.188, p < .01, scaling correction factor = 0.674
+#  CFI = 0.998, TLI = 0.996, 
+#  RMSEA = 0.050, SRMR = 0.023
+#Factor loadings: All indicators have standardized loadings of > 0.68. Great!
+summary(fit.rh.model0.ord, fit.measures=TRUE, standardized=TRUE)
+
+inspect(fit.rh.model0.ord, 'r2')
+```
+
+### DRIVE
+
+Model 0: Baseline model with all 5 indicators, no correlated errors 
+
+```{r, warning=FALSE}
+#drive.model0 <- 'Drive =~ DRSAFE + DRCOMF + DRRELY + DREASY + DRPERC' 
+fit.drive.model0.ord <- cfa(drive.model0, data=data, 
+                            ordered=c("DRSAFE", "DRCOMF", "DRRELY", "DREASY", "DRPERC"),
+                            missing='pairwise')
+
+#Very good model fit: 
+#  chi-square(N = 953, df = 5) = 3.037, p = 0.69, scaling correction factor = 0.585
+#  CFI = 1.00, TLI = 1.00, 
+#  RMSEA = 0.000, SRMR = 0.012
+#Factor loadings: All indicators have standardized loadings of > 0.65!
+summary(fit.drive.model0.ord, fit.measures=TRUE, standardized=TRUE)
+
+inspect(fit.drive.model0.ord, 'r2')
+```
+
+## ESTIMATE FACTOR SCORES
+Estimate factor scores and append to data records to be included in mode choice models
+
+```{r factscore}
+#https://rdrr.io/cran/lavaan/man/lavPredict.html
+
+# With continuous indicators, the possible options for method = are "regression" or "Bartlett"
+data$WALK_LV.con <- lavPredict(fit.walk.model1, type = "lv", method = "regression")
+data$PT_LV.con <- lavPredict(fit.pt.model0, type = "lv", method = "regression")
+data$RH_LV.con <- lavPredict(fit.rh.model0, type = "lv", method = "regression")
+data$DRIVE_LV.con <- lavPredict(fit.drive.model0, type = "lv", method = "regression")
+#write.csv(data, "data/individual_new_LV.csv")
+
+# With ordinal indicators, the possible options for method = are "EBM" for the Empirical Bayes Modal approach and "ML" for the maximum likelihood approach.
+data$WALK_LV.ord <- lavPredict(fit.walk.model1.ord, type = "lv", method = "EBM")
+data$PT_LV.ord <- lavPredict(fit.pt.model0.ord, type = "lv", method = "EBM")
+data$RH_LV.ord <- lavPredict(fit.rh.model0.ord, type = "lv", method = "EBM")
+data$DRIVE_LV.ord <- lavPredict(fit.drive.model0.ord, type = "lv", method = "EBM")
+
+# Calculate correlation between factor scores estimated treating indicators as continuous and factor scores estimated treating indicators as ordinal -- all are at least 0.97
+cor(data$WALK_LV.con, data$WALK_LV.ord)
+cor(data$PT_LV.con, data$PT_LV.ord)
+cor(data$RH_LV.con, data$RH_LV.ord)
+cor(data$DRIVE_LV.con, data$DRIVE_LV.ord, use="pairwise.complete.obs")
+
+write.csv(data, "20201016_data-LV.csv")
+
+```
+
+## RELIABILITY
+
+```{r reliability}
+#Readily available only for the models treating indicators as continuous (functions do not run with ordinal model fit as input)
+
+
+#Composite reliability (Omega) and Cronbach's alpha
+#  https://rdrr.io/cran/semTools/man/reliability.html 
+semTools::reliability(fit.walk.model1)
+semTools::reliability(fit.pt.model0)
+semTools::reliability(fit.rh.model0)
+semTools::reliability(fit.drive.model0)
+
+#Maximal reliability
+#  https://rdrr.io/cran/semTools/man/maximalRelia.html
+semTools::maximalRelia(fit.walk.model1)
+semTools::maximalRelia(fit.pt.model0)
+semTools::maximalRelia(fit.rh.model0)
+semTools::maximalRelia(fit.drive.model0)
+
+```
+
+
+## DIVERGENT VALIDITY: Combined Model (continuous)
+
+```{r divergent}
+full.model <- ' Walk  =~ WSAFE + WCOMF + WRELY + WEASY + WPERC
+                WSAFE ~~ WRELY
+                PT =~ PTSAFE + PTCOMF + PTRELY + PTEASY + PTPERC
+                RH =~ CARSAFE + CARCOMF + CARRELY + CAREASY + CARPERC
+                Drive =~ DRSAFE + DRCOMF + DRRELY + DREASY + DRPERC'
+
+fit <- cfa(full.model, data=data, missing="fiml")
+summary(fit, fit.measures=TRUE, standardized=TRUE)
+#Model fit is poor: 
+#  chi-square(2003, 163) = 3967.0, 
+#  CFI = 0.785, TLI = 0.750, 
+#  RMSEA = 0.108, SRMR = 0.079
+#Currently the model is using FIML to fill in for more than half of the sample missing data on the drive/
+#   personal car indicators -- this is extremely suspect!
+
+fit.listwisedelete <- cfa(full.model, data=data) #use default of listwise deletion
+summary(fit.listwisedelete, fit.measures=TRUE, standardized=TRUE)
+#Model fit is still poor: chi-square(953, 163) = 2381.3, CFI = 0.783, TLI = 0.747, RMSEA = 0.120, SRMR = 0.083
+#I suspect there is correlation among the error terms for the same indicators across modes; we can check MIs
+mi.fit.listwisedelete <- modindices(fit.listwisedelete, minimum.value=20)
+mi.fit.listwisedelete 
+#Modification indices:
+#  Thankfully, we see very few cross-loadings: RH =~  PTSAFE (64.7), which means our factor structure is clean
+#  However, we see a lot of correlated error terms: as expected WSAFE ~~  PTSAFE (192.7), WCOMF ~~  PTCOMF (326.0), 
+#     WEASY ~~ PTEASY (131.9)
+
+#But in general, the results above suggest that we should estimate/extract the factor scores for each 
+#individual from the separate CFAs rather than from the combined measurement model
+```
+
+
+## DIVERGENT VALIDITY: Combined Model (ordinal)
+
+```{r divergent-ord}
+fit.fullmodel.ord <- cfa(full.model, data=data, 
+                         ordered=c("WSAFE","WCOMF","WRELY","WEASY", "WPERC",
+                                   "PTSAFE", "PTCOMF", "PTRELY", "PTEASY", "PTPERC",
+                                   "CARSAFE", "CARCOMF", "CARRELY", "CAREASY", "CARPERC",
+                                   "DRSAFE", "DRCOMF", "DRRELY", "DREASY", "DRPERC"),
+                         missing='pairwise') #using default of listwise deletion
+
+
+summary(fit.fullmodel.ord, fit.measures=TRUE, standardized=TRUE)
+modindices(fit.fullmodel.ord, minimum.value=100)
+
+#Modification indices:
+#We do see some significant cross-loadings and some correlated error terms as we might expect (primarily among the same construct across modes)
+
+#But in general, the results above suggest that we should estimate/extract the factor scores for each individual from the separate CFAs rather than from the combined measurement model (as we have done)
+```
+

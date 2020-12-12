@@ -1,0 +1,85 @@
+var,value_std_er
+ASC_PT,-0.056 (0.114)
+ASC_RIDEHAIL,-0.531 (0.126) ***
+ASC_DRIVE,0.199 (0.083) **
+ASC_AV,-0.504 (0.147) ***
+BETA_Walk_Pro_Walk,0.775 (0.065) ***
+BETA_PT_Pro_Walk,-0.048 (0.046)
+BETA_PT_Pro_PT,0.698 (0.068) ***
+BETA_RH_Pro_RH,0.568 (0.047) ***
+BETA_Drive_Pro_Drive,0.597 (0.057) ***
+BETA_AV_Pro_Walk,0.027 (0.059)
+BETA_AV_Pro_PT,-0.054 (0.081)
+BETA_AV_Pro_RH,0.416 (0.050) ***
+BETA_AV_Pro_Drive,0.039 (0.053)
+BETA_WALK_WALKTIME,-0.050 (0.003) ***
+BETA_BUS_COST,-0.240 (0.021) ***
+BETA_BUS_IVTIME,-0.020 (0.001) ***
+BETA_BUS_WAITTIME,-0.031 (0.004) ***
+BETA_BUS_WALKTIME,-0.035 (0.003) ***
+BETA_RIDEHAIL_COST,-0.065 (0.005) ***
+BETA_RIDEHAIL_IVTIME,-0.030 (0.003) ***
+BETA_RIDEHAIL_WAITTIME,-0.036 (0.006) ***
+BETA_DRIVE_COST,-0.110 (0.007) ***
+BETA_DRIVE_IVTIME,-0.042 (0.004) ***
+BETA_DRIVE_WALKTIME,-0.051 (0.010) ***
+BETA_AV_COST,-0.096 (0.006) ***
+BETA_AV_IVTIME,-0.034 (0.003) ***
+BETA_AV_WAITTIME,-0.040 (0.006) ***
+BETA_PT_Income_4000_less,0.129 (0.056) **
+BETA_PT_Income_12000_more,-0.032 (0.073)
+BETA_PT_Single,0.068 (0.065)
+BETA_PT_haveLicense,-0.171 (0.054) ***
+BETA_PT_Chinese,-0.007 (0.067)
+BETA_PT_Commute,0.725 (0.066) ***
+BETA_PT_fulltimeJob,0.051 (0.054)
+BETA_PT_highEducation,0.069 (0.051)
+BETA_PT_age_60_more,-0.094 (0.100)
+BETA_PT_age_35_less,0.025 (0.056)
+BETA_PT_moreThanOneCar,0.079 (0.134)
+BETA_PT_male,-0.021 (0.048)
+BETA_PT_kid_under18,-0.014 (0.068)
+BETA_RH_Income_4000_less,-0.070 (0.064)
+BETA_RH_Income_12000_more,0.127 (0.081)
+BETA_RH_Single,-0.085 (0.074)
+BETA_RH_haveLicense,-0.225 (0.060) ***
+BETA_RH_Chinese,-0.342 (0.073) ***
+BETA_RH_Commute,0.350 (0.060) ***
+BETA_RH_fulltimeJob,0.169 (0.062) ***
+BETA_RH_highEducation,0.064 (0.058)
+BETA_RH_age_60_more,-0.027 (0.120)
+BETA_RH_age_35_less,0.225 (0.065) ***
+BETA_RH_moreThanOneCar,0.658 (0.143) ***
+BETA_RH_male,-0.177 (0.056) ***
+BETA_RH_kid_under18,0.211 (0.077) ***
+BETA_Drive_Income_4000_less,-0.121 (0.100)
+BETA_Drive_Income_12000_more,0.142 (0.084) *
+BETA_Drive_Single,0.165 (0.093) *
+BETA_Drive_haveLicense,0.199 (0.083) **
+BETA_Drive_Chinese,-0.138 (0.106)
+BETA_Drive_Commute,0.396 (0.074) ***
+BETA_Drive_fulltimeJob,-0.074 (0.079)
+BETA_Drive_highEducation,0.016 (0.070)
+BETA_Drive_age_60_more,-0.119 (0.139)
+BETA_Drive_age_35_less,0.174 (0.080) **
+BETA_Drive_moreThanOneCar,0.478 (0.140) ***
+BETA_Drive_male,-0.063 (0.066)
+BETA_Drive_kid_under18,0.093 (0.089)
+BETA_AV_Income_4000_less,-0.064 (0.069)
+BETA_AV_Income_12000_more,0.061 (0.086)
+BETA_AV_Single,-0.114 (0.080)
+BETA_AV_haveLicense,-0.032 (0.067)
+BETA_AV_Chinese,-0.166 (0.080) **
+BETA_AV_Commute,0.448 (0.065) ***
+BETA_AV_fulltimeJob,0.187 (0.068) ***
+BETA_AV_highEducation,0.123 (0.062) **
+BETA_AV_age_60_more,-0.017 (0.130)
+BETA_AV_age_35_less,0.327 (0.070) ***
+BETA_AV_moreThanOneCar,0.318 (0.156) **
+BETA_AV_male,-0.039 (0.059)
+BETA_AV_kid_under18,0.238 (0.082) ***
+SCALE_SP,1.440 (0.074) ***
+sigma_s_tidle_PT,0.486 (0.138) ***
+sigma_s_tidle_RH,0.003 (0.136)
+sigma_s_tidle_Drive,0.009 (0.109)
+sigma_s_tidle_AV,0.001 (0.075)
